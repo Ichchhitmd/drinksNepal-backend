@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  # MongoDB service
+  db:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "${DB_PORT}:27017"
+
+  # Express application service
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: express_app
+    environment:
+      MONGO_URI: mongodb://${DB_USER}:${DB_PASSWORD}@db:27017/${DB_NAME}?authSource=admin
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: ./adminui
+      dockerfile: Dockerfile
+    ports:
+      - "6000:80"
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  
+volumes:
+  mongodata:
