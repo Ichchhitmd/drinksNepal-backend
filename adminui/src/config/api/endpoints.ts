@@ -1,4 +1,4 @@
-export const BASE_URL = "https://drinks.tantriktech.com.np";
+export const BASE_URL = "http://localhost:8001";
 
 const API_ENDPOINTS = {
   // Auth endpoints
